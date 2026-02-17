@@ -1,0 +1,492 @@
+/* ============================================
+   COLECCIÓN BOTÁNICA — EDYELI
+   Paleta: Jardín de Monet
+   Scroll horizontal · Blur progresivo
+   ============================================ */
+
+/* === VARIABLES (paleta de la imagen) === */
+:root {
+  --carbon:    #1C1B1A;
+  --bark:      #3B2F2A;
+  --earth:     #8C6F5A;
+  --parchment: #EDE7DC;
+  --fern:      #597358;
+  --cream:     #FFFAF2;
+
+  --font-display: 'Cormorant', Georgia, serif;
+  --font-text:    'Cormorant Garamond', Georgia, serif;
+}
+
+/* === RESET === */
+*, *::before, *::after {
+  margin: 0; padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  width: 100%; height: 100%;
+  overflow: hidden; /* Controlamos el scroll nosotros */
+  background: var(--carbon);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* =============================================
+   FONDO PERMANENTE — PINTURA DE MONET
+   ============================================= */
+.painting-bg {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+}
+
+.painting-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center center;
+  display: block;
+  /* Inicialmente limpia, el blur lo aplicamos via JS con filter */
+  transition: filter 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Overlay de color suave (siempre presente, oscurece un poco) */
+.painting-bg::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(28, 27, 26, 0.25);
+  pointer-events: none;
+}
+
+/* Overlay de blur completo (se activa en galería) */
+.blur-overlay {
+  position: absolute;
+  inset: 0;
+  backdrop-filter: blur(0px);
+  -webkit-backdrop-filter: blur(0px);
+  background: rgba(28, 27, 26, 0);
+  transition: backdrop-filter 0.9s cubic-bezier(0.4, 0, 0.2, 1),
+              background 0.9s cubic-bezier(0.4, 0, 0.2, 1);
+  pointer-events: none;
+}
+
+/* Estado cuando galería está activa */
+.blur-overlay.gallery-active {
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  background: rgba(28, 27, 26, 0.35);
+}
+
+/* =============================================
+   SCROLL TRACK HORIZONTAL
+   ============================================= */
+.scroll-track {
+  position: fixed;
+  inset: 0;
+  z-index: 10;
+  display: flex;
+  flex-direction: row;
+  /* El ancho lo define el número de paneles */
+  width: max-content;
+  /* Transición del translate via JS */
+  transition: transform 0.9s cubic-bezier(0.77, 0, 0.175, 1);
+  will-change: transform;
+}
+
+/* =============================================
+   PANEL BASE
+   ============================================= */
+.panel {
+  width: 100vw;
+  height: 100vh;
+  flex-shrink: 0;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* =============================================
+   PANEL COVER — PORTADA
+   ============================================= */
+.panel-cover {
+  /* Nada de fondo propio, solo la pintura atrás */
+}
+
+/* Halo de blur radial solo detrás del texto */
+.text-blur-halo {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  /* Tamaño inicial: solo cubre el texto */
+  width: 940px;
+  height: 940px;
+  border-radius: 50%;
+  /* Blur radial progresivo desde el centro */
+  background: radial-gradient(
+    ellipse at center,
+    rgba(37, 36, 35, 0.6) 0%,
+    rgba(28, 27, 26, 0.40) 35%,
+    rgba(28, 27, 26, 0.15) 60%,
+    transparent 100%
+  );
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  /* Máscara radial para que el blur sea progresivo */
+  -webkit-mask-image: radial-gradient(ellipse at center, black 20%, transparent 75%);
+  mask-image: radial-gradient(ellipse at center, black 20%, transparent 75%);
+  transition: all 1.9s cubic-bezier(0.4, 0, 0.2, 1);
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* El texto va encima del halo */
+.cover-content {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  color: var(--cream);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+}
+
+.cover-eyebrow {
+  font-family: var(--font-text);
+  font-size: clamp(0.75rem, 1.5vw, 0.875rem);
+  font-weight: 300;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: rgba(255, 250, 242, 0.7);
+  margin-bottom: 20px;
+}
+
+.cover-title {
+  font-family: var(--font-display);
+  font-size: clamp(3.5rem, 8vw, 7rem);
+  font-weight: 300;
+  line-height: 1.0;
+  letter-spacing: -0.02em;
+  color: var(--cream);
+  margin-bottom: 20px;
+}
+
+.cover-title em {
+  font-style: italic;
+  font-weight: 300;
+  color: rgba(255, 250, 242, 0.85);
+}
+
+.cover-subtitle {
+  font-family: var(--font-text);
+  font-size: clamp(0.875rem, 1.5vw, 1rem);
+  font-weight: 300;
+  font-style: italic;
+  color: rgba(255, 250, 242, 0.55);
+  letter-spacing: 0.08em;
+  margin-bottom: 48px;
+}
+
+/* Indicador de deslizar */
+.cover-hint {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  opacity: 0;
+  animation: fadeHint 1s ease 1.5s forwards;
+}
+
+@keyframes fadeHint {
+  to { opacity: 0.5; }
+}
+
+.hint-line {
+  display: block;
+  width: 40px;
+  height: 1px;
+  background: rgba(255, 250, 242, 0.5);
+}
+
+.hint-text {
+  font-family: var(--font-text);
+  font-size: 0.75rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(255, 250, 242, 0.6);
+}
+
+/* Animación del hint — flecha moviéndose */
+.hint-line:last-child {
+  animation: nudge 2s ease-in-out 2s infinite;
+}
+
+@keyframes nudge {
+  0%, 100% { transform: translateX(0); }
+  50% { transform: translateX(8px); }
+}
+
+/* =============================================
+   PANEL GALLERY — CAPÍTULOS
+   ============================================= */
+.panel-gallery {
+  align-items: flex-start;
+  justify-content: flex-start;
+  padding: 0 5vw;
+  flex-direction: column;
+  justify-content: center;
+  gap: 32px;
+}
+
+.gallery-header {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.gallery-title {
+  font-family: var(--font-display);
+  font-size: clamp(1.5rem, 3vw, 2rem);
+  font-weight: 300;
+  font-style: italic;
+  color: var(--cream);
+  letter-spacing: -0.01em;
+}
+
+.gallery-counter {
+  font-family: var(--font-text);
+  font-size: 0.8125rem;
+  font-weight: 300;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(255, 250, 242, 0.5);
+}
+
+/* Fila de capítulos (scroll horizontal interno si hay muchos) */
+.chapters-row {
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+  overflow-x: auto;
+  padding-bottom: 8px;
+  scrollbar-width: none;
+  max-width: 95vw;
+}
+
+.chapters-row::-webkit-scrollbar {
+  display: none;
+}
+
+/* =============================================
+   CHAPTER CARDS
+   ============================================= */
+.chapter-card {
+  flex-shrink: 0;
+  width: clamp(180px, 22vw, 240px);
+  min-height: 280px;
+  background: rgba(237, 231, 220, 0.10);
+  border: 1px solid rgba(237, 231, 220, 0.18);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  padding: 28px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  text-decoration: none;
+  color: var(--cream);
+  position: relative;
+  overflow: hidden;
+  transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: default;
+}
+
+/* Línea de color en la parte superior — según flor */
+.chapter-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: rgba(237, 231, 220, 0.2);
+  transition: background 0.3s;
+}
+
+/* Colores de acento por flor */
+.chapter-card.unlocked[data-flower="lily"]::before       { background: #B8A9C9; }
+.chapter-card.unlocked[data-flower="rose"]::before       { background: #E63946; }
+.chapter-card.unlocked[data-flower="tulip"]::before      { background: #FF6B35; }
+.chapter-card.unlocked[data-flower="daisy"]::before      { background: #FFD60A; }
+.chapter-card.unlocked[data-flower="lavender"]::before   { background: #9B59B6; }
+.chapter-card.unlocked[data-flower="sunflower"]::before  { background: #FFA500; }
+.chapter-card.unlocked[data-flower="peony"]::before      { background: #FF69B4; }
+.chapter-card.unlocked[data-flower="hydrangea"]::before  { background: #4A90E2; }
+.chapter-card.unlocked[data-flower="camellia"]::before   { background: #C41E3A; }
+
+/* Hover en desbloqueados */
+.chapter-card.unlocked {
+  cursor: pointer;
+}
+
+.chapter-card.unlocked:hover {
+  background: rgba(237, 231, 220, 0.18);
+  border-color: rgba(237, 231, 220, 0.35);
+  transform: translateY(-6px);
+}
+
+.chapter-card.locked {
+  opacity: 0.35;
+}
+
+.card-number {
+  font-family: var(--font-display);
+  font-size: 0.75rem;
+  font-weight: 400;
+  letter-spacing: 0.12em;
+  color: rgba(255, 250, 242, 0.4);
+}
+
+.card-flower {
+  font-size: 2.5rem;
+  line-height: 1;
+}
+
+.locked-icon {
+  font-size: 1.5rem;
+  color: rgba(255, 250, 242, 0.2);
+}
+
+.card-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.card-title {
+  font-family: var(--font-display);
+  font-size: 1.375rem;
+  font-weight: 400;
+  font-style: italic;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+}
+
+.card-essence {
+  font-family: var(--font-text);
+  font-size: 0.8125rem;
+  font-weight: 300;
+  color: rgba(255, 250, 242, 0.5);
+  font-style: italic;
+}
+
+.card-date {
+  font-family: var(--font-text);
+  font-size: 0.75rem;
+  color: rgba(255, 250, 242, 0.35);
+  letter-spacing: 0.06em;
+}
+
+.card-arrow {
+  font-size: 1.125rem;
+  color: rgba(255, 250, 242, 0.4);
+  align-self: flex-end;
+  transition: transform 0.25s, color 0.25s;
+}
+
+.chapter-card.unlocked:hover .card-arrow {
+  transform: translateX(5px);
+  color: rgba(255, 250, 242, 0.8);
+}
+
+/* =============================================
+   ANIMACIONES DE ENTRADA
+   ============================================= */
+.cover-content {
+  animation: revealCover 1.2s cubic-bezier(0.4, 0, 0.2, 1) 0.3s both;
+}
+
+@keyframes revealCover {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.chapter-card {
+  animation: none;
+}
+
+.chapter-card.animate-in {
+  animation: cardReveal 0.6s cubic-bezier(0.4, 0, 0.2, 1) both;
+}
+
+@keyframes cardReveal {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* =============================================
+   RESPONSIVE MÓVIL
+   ============================================= */
+@media (max-width: 768px) {
+  .text-blur-halo {
+    width: 360px;
+    height: 260px;
+  }
+
+  .cover-title {
+    font-size: 3.5rem;
+  }
+
+  .panel-gallery {
+    padding: 0 6vw;
+    gap: 24px;
+  }
+
+  .chapter-card {
+    width: clamp(160px, 60vw, 200px);
+    min-height: 240px;
+    padding: 24px 20px;
+  }
+
+  .card-title {
+    font-size: 1.25rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .cover-title {
+    font-size: 2.75rem;
+  }
+
+  .text-blur-halo {
+    width: 300px;
+    height: 220px;
+  }
+
+  .chapter-card {
+    width: 160px;
+    min-height: 220px;
+    padding: 20px 16px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scroll-track,
+  .blur-overlay,
+  .painting-img,
+  .text-blur-halo {
+    transition: none !important;
+  }
+  .cover-hint { opacity: 0.5; animation: none; }
+}

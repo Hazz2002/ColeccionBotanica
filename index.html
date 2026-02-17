@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>Colección Botánica — Edyeli</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- FONDO PERMANENTE: Pintura de Monet -->
+  <div class="painting-bg" id="paintingBg">
+    <img src="monet.jpg" alt="" class="painting-img" id="paintingImg">
+    <!-- Capa de blur que se activa según scroll -->
+    <div class="blur-overlay" id="blurOverlay"></div>
+  </div>
+
+  <!-- SCROLL CONTAINER HORIZONTAL -->
+  <div class="scroll-track" id="scrollTrack">
+
+    <!-- ====== PANEL 1: PORTADA ====== -->
+    <section class="panel panel-cover" id="panelCover">
+
+      <!-- Blur radial solo detrás del texto — se achica cuando transiciona -->
+      <div class="text-blur-halo" id="textHalo"></div>
+
+      <div class="cover-content">
+        <p class="cover-eyebrow"></p>
+        <h1 class="cover-title">Colección<br><em>Botánica</em></h1>
+        <p class="cover-subtitle">Un jardín que crece contigo</p>
+        <div class="cover-hint">
+          <span class="hint-line"></span>
+          <span class="hint-text">desliza</span>
+          <span class="hint-line"></span>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ====== PANEL 2: GALERÍA DE CAPÍTULOS ====== -->
+    <section class="panel panel-gallery" id="panelGallery">
+
+      <div class="gallery-header">
+        <h2 class="gallery-title">Capítulos</h2>
+        <p class="gallery-counter"><span id="unlockedCount">1</span> desbloqueado de ∞</p>
+      </div>
+
+      <div class="chapters-row">
+
+        <!-- Capítulo 1 - DESBLOQUEADO -->
+        <a href="set-1.html" class="chapter-card unlocked" data-flower="lily">
+          <div class="card-number">01</div>
+          <div class="card-flower">🌸</div>
+          <div class="card-info">
+            <h3 class="card-title">Lirios &<br>Margaritas</h3>
+            <p class="card-essence">Pureza · Inocencia</p>
+            <p class="card-date">13.02.2026</p>
+          </div>
+          <div class="card-arrow">→</div>
+        </a>
+
+        <!-- Capítulo 2 - BLOQUEADO -->
+        <div class="chapter-card locked">
+          <div class="card-number">02</div>
+          <div class="card-flower locked-icon">✦</div>
+          <div class="card-info">
+            <h3 class="card-title">Por<br>revelar</h3>
+            <p class="card-essence">—</p>
+            <p class="card-date">—</p>
+          </div>
+        </div>
+
+        <!-- Capítulo 3 - BLOQUEADO -->
+        <div class="chapter-card locked">
+          <div class="card-number">03</div>
+          <div class="card-flower locked-icon">✦</div>
+          <div class="card-info">
+            <h3 class="card-title">Por<br>revelar</h3>
+            <p class="card-essence">—</p>
+            <p class="card-date">—</p>
+          </div>
+        </div>
+
+        <!-- Capítulo 4 - BLOQUEADO -->
+        <div class="chapter-card locked">
+          <div class="card-number">04</div>
+          <div class="card-flower locked-icon">✦</div>
+          <div class="card-info">
+            <h3 class="card-title">Por<br>revelar</h3>
+            <p class="card-essence">—</p>
+            <p class="card-date">—</p>
+          </div>
+        </div>
+
+        <!-- Capítulo 5 - BLOQUEADO -->
+        <div class="chapter-card locked">
+          <div class="card-number">05</div>
+          <div class="card-flower locked-icon">✦</div>
+          <div class="card-info">
+            <h3 class="card-title">Por<br>revelar</h3>
+            <p class="card-essence">—</p>
+            <p class="card-date">—</p>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+  </div><!-- fin scroll-track -->
+
+  <script src="script.js"></script>
+</body>
+</html>
