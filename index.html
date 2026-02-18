@@ -17,7 +17,10 @@
     <!-- Capa de blur que se activa según scroll -->
     <div class="blur-overlay" id="blurOverlay"></div>
   </div>
-
+  <div class="particles-container">
+    <div class="particle"></div><div class="particle"></div><div class="particle"></div>
+    <div class="particle"></div><div class="particle"></div><div class="particle"></div>
+  </div>
   <!-- SCROLL CONTAINER HORIZONTAL -->
   <div class="scroll-track" id="scrollTrack">
 
@@ -46,6 +49,7 @@
       <div class="gallery-header">
         <h2 class="gallery-title">Capítulos</h2>
         <p class="gallery-counter"><span id="unlockedCount">1</span> desbloqueado de ∞</p>
+        <p class="days-counter" id="daysCounter">—</p>
       </div>
 
       <div class="chapters-row">
@@ -63,7 +67,7 @@
         </a>
 
         <!-- Capítulo 2 - BLOQUEADO -->
-        <div class="chapter-card locked">
+        <div class="chapter-card locked" data-unlock="cap2" data-href="set-2.html" data-flower="rose">
           <div class="card-number">02</div>
           <div class="card-flower locked-icon">✦</div>
           <div class="card-info">
@@ -74,7 +78,7 @@
         </div>
 
         <!-- Capítulo 3 - BLOQUEADO -->
-        <div class="chapter-card locked">
+        <div class="chapter-card locked" data-unlock="cap3" data-href="set-3.html" data-flower="tulip">
           <div class="card-number">03</div>
           <div class="card-flower locked-icon">✦</div>
           <div class="card-info">
@@ -84,29 +88,8 @@
           </div>
         </div>
 
-        <!-- Capítulo 4 - BLOQUEADO -->
-        <div class="chapter-card locked">
-          <div class="card-number">04</div>
-          <div class="card-flower locked-icon">✦</div>
-          <div class="card-info">
-            <h3 class="card-title">Por<br>revelar</h3>
-            <p class="card-essence">—</p>
-            <p class="card-date">—</p>
-          </div>
-        </div>
-
-        <!-- Capítulo 5 - BLOQUEADO -->
-        <div class="chapter-card locked">
-          <div class="card-number">05</div>
-          <div class="card-flower locked-icon">✦</div>
-          <div class="card-info">
-            <h3 class="card-title">Por<br>revelar</h3>
-            <p class="card-essence">—</p>
-            <p class="card-date">—</p>
-          </div>
-        </div>
-
       </div>
+      
     </section>
 
   </div><!-- fin scroll-track -->

@@ -76,6 +76,58 @@ html, body {
   -webkit-backdrop-filter: blur(12px);
   background: rgba(28, 27, 26, 0.35);
 }
+/* Contenedor fijo */
+.particles-container {
+    position: fixed; 
+    inset: 0; 
+    pointer-events: none; 
+    z-index: 2; /* Por encima del velo oscuro, para que brillen más */
+}
+
+.particle {
+    position: absolute;
+    border-radius: 50%;
+    
+    /* El truco del brillo: centro blanco, bordes transparentes */
+    background: radial-gradient(circle, rgba(160, 156, 156, 0.787) 40%, rgba(255,255,255,0) 70%);
+    
+    
+    opacity: 0;
+    bottom: -10vh; /* Empiezan más abajo para no aparecer de la nada */
+    animation: floatDrift linear infinite;
+}
+
+/* Configuraciones individuales para caos natural */
+.particle:nth-child(1) { left: 15%; width: 3px; height: 3px; animation-duration: 14s; animation-delay: 0s; }
+.particle:nth-child(2) { left: 35%; width: 4px; height: 4px; animation-duration: 20s; animation-delay: 4s; }
+.particle:nth-child(3) { left: 50%; width: 2px; height: 2px; animation-duration: 16s; animation-delay: 2s; }
+.particle:nth-child(4) { left: 65%; width: 5px; height: 5px; animation-duration: 18s; animation-delay: 7s; }
+.particle:nth-child(5) { left: 85%; width: 3px; height: 3px; animation-duration: 22s; animation-delay: 1s; }
+.particle:nth-child(6) { left: 95%; width: 1px; height: 1px; animation-duration: 15s; animation-delay: 5s; }
+
+/* Animación: Sube, se mueve a los lados y palpita */
+@keyframes floatDrift {
+    0% {
+        transform: translateY(0) translateX(0) scale(0.5);
+        opacity: 0;
+    }
+    20% {
+        opacity: 0.8; /* Aparecen rápido */
+        transform: translateY(-20vh) translateX(15px) scale(1);
+    }
+    50% {
+        opacity: 1; /* Brillo máximo a mitad de camino */
+        transform: translateY(-50vh) translateX(-15px) scale(1.2);
+    }
+    80% {
+        opacity: 0.6;
+        transform: translateY(-80vh) translateX(10px) scale(1);
+    }
+    100% {
+        transform: translateY(-120vh) translateX(0) scale(0.5);
+        opacity: 0;
+    }
+}
 
 /* =============================================
    SCROLL TRACK HORIZONTAL
@@ -126,7 +178,7 @@ html, body {
   /* Blur radial progresivo desde el centro */
   background: radial-gradient(
     ellipse at center,
-    rgba(37, 36, 35, 0.6) 0%,
+    rgba(28, 27, 26, 0.6) 0%,
     rgba(28, 27, 26, 0.40) 35%,
     rgba(28, 27, 26, 0.15) 60%,
     transparent 100%
@@ -489,4 +541,62 @@ html, body {
     transition: none !important;
   }
   .cover-hint { opacity: 0.5; animation: none; }
+}
+
+/* =============================================
+   NOTIFICACIÓN DE DESBLOQUEO
+   ============================================= */
+.unlock-notification {
+  position: fixed;
+  top: 24px;
+  left: 50%;
+  transform: translateX(-50%) translateY(-100px);
+  background: rgba(89, 115, 88, 0.95);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(237, 231, 220, 0.3);
+  padding: 16px 28px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  z-index: 9999;
+  opacity: 0;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+}
+
+.unlock-notification.show {
+  transform: translateX(-50%) translateY(0);
+  opacity: 1;
+}
+
+.notif-icon {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: rgba(255, 250, 242, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.875rem;
+  color: var(--cream);
+}
+
+.notif-text {
+  font-family: var(--font-text);
+  font-size: 0.9375rem;
+  color: var(--cream);
+  font-weight: 400;
+  letter-spacing: 0.02em;
+}
+
+/* =============================================
+   CONTADOR DE DÍAS
+   ============================================= */
+.days-counter {
+  font-family: var(--font-text);
+  font-size: 0.8125rem;
+  color: rgba(255, 250, 242, 0.35);
+  letter-spacing: 0.08em;
+  margin-top: 8px;
 }

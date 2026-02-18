@@ -134,4 +134,82 @@
     e.preventDefault();
   }, { passive: false });
 
+      // ═══ SISTEMA DE DESBLOQUEO ═══
+  (function initUnlock() {
+    const params = new URLSearchParams(window.location.search);
+    const unlockCode = params.get('unlock');
+    
+    if (unlockCode) {
+      // Guardar capítulo desbloqueado
+      let unlocked = JSON.parse(localStorage.getItem('unlockedChapters') || '["cap1"]');
+      if (!unlocked.includes(unlockCode)) {
+        unlocked.push(unlockCode);
+        localStorage.setItem('unlockedChapters', JSON.stringify(unlocked));
+        
+        // Limpiar URL sin recargar
+        window.history.replaceState({}, '', window.location.pathname);
+        
+        // Mostrar notificación
+        showUnlockNotification(unlockCode);
+      }
+    }
+    
+    // Aplicar desbloqueos guardados
+    applyUnlocks();
+  })();
+
+  function applyUnlocks() {
+    const unlocked = JSON.parse(localStorage.getItem('unlockedChapters') || '["cap1"]');
+    
+    // Actualizar contador
+    const counter = document.getElementById('unlockedCount');
+    if (counter) counter.textContent = unlocked.length;
+    
+    // Desbloquear cards correspondientes
+    unlocked.forEach(code => {
+      const card = document.querySelector(`[data-unlock="${code}"]`);
+      if (card && card.classList.contains('locked')) {
+        card.classList.remove('locked');
+        card.classList.add('unlocked');
+        // Si es <div>, convertir a <a>
+        if (card.tagName === 'DIV') {
+          const href = card.getAttribute('data-href');
+          if (href) {
+            card.style.cursor = 'pointer';
+            card.addEventListener('click', () => window.location.href = href);
+          }
+        }
+      }
+    });
+  }
+
+  function showUnlockNotification(code) {
+    const notif = document.createElement('div');
+    notif.className = 'unlock-notification';
+    notif.innerHTML = `
+      <div class="notif-icon">✓</div>
+      <div class="notif-text">Capítulo desbloqueado</div>
+    `;
+    document.body.appendChild(notif);
+    
+    setTimeout(() => notif.classList.add('show'), 100);
+    setTimeout(() => {
+      notif.classList.remove('show');
+      setTimeout(() => notif.remove(), 400);
+    }, 3000);
+  }
+
+  // ═══ CONTADOR DE DÍAS ═══
+  (function initDaysCounter() {
+    const firstFlowerDate = new Date('2026-02-13'); // 13 de febrero 2026
+    const today = new Date();
+    const diffTime = Math.abs(today - firstFlowerDate);
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    
+    const counter = document.getElementById('daysCounter');
+    if (counter) {
+      counter.textContent = `${diffDays} ${diffDays === 1 ? 'día' : 'días'} desde la primera flor`;
+    }
+  })();
+
 })();
